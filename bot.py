@@ -40,7 +40,7 @@ async def start(update: Update, context: CallbackContext) -> int:
     await update.message.reply_text(
         """
         မိမိတိုနေထိုင်ရာ ရပ်ကွက်ဝန်းကျင် အနီးဆုံးက စစ်တပ်ထောက်တိုင် လက်ပါးစေဖြစ်တဲ့ ရပ်ကွက်အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) တွေအကြောင်း မိမိကိုယ်တိုင် သတင်းပေးနိုင်ဖို ရည်ရွယ်ပါတယ်။
-        အုပ်ကြီးသတင်း ပေးပိုလိုသော မြိုနယ်နာမည်၏ ပထမဆုံးအက္ခရာကိုရွေးချယ်ပါ။ (ဥပမာ - ကမာရွတ်မြိုနယ်အတွက် “က”)
+        အုပ်ကြီးသတင်း ပေးပို့လိုသော မြိုနယ်နာမည်၏ ပထမဆုံးအက္ခရာကိုရွေးချယ်ပါ။ (ဥပမာ - ကမာရွတ်မြိုနယ်အတွက် “က”)
         """,
         reply_markup=township_first_consonant_keyboard,
     )
@@ -52,7 +52,7 @@ async def choose_township(update: Update, context: CallbackContext) -> int:
     kb_dict = township_keyboards_dict
     chosen_consonant = update.message.text
     await update.message.reply_text(
-        "အုပ်ကြီးသတင်း ပေးပိုလိုသော မြိုနယ်ကို ရွေးချယ်ပါ။",
+        "အုပ်ကြီးသတင်း ပေးပို့လိုသော မြိုနယ်ကို ရွေးချယ်ပါ။",
         reply_markup=ReplyKeyboardMarkup(
             kb_dict.get(chosen_consonant), resize_keyboard=True, one_time_keyboard=True, input_field_placeholder="Township"),
     )
@@ -67,12 +67,12 @@ async def ask_ward(update: Update, context: CallbackContext) -> int:
     wards_keyboard = wards_kb_obj.keyboard
     wards_keyboard2 = wards_kb_obj.keyboard2 if wards_kb_obj.keyboard2 is not None else None
     await update.message.reply_text(
-        "အုပ်ကြီးသတင်း ပေးပိုလိုသော ရပ်ကွက်/ကျေးရွာအုပ်စု၏အမည်ကို ရွေးချယ်ပါ။",
+        "အုပ်ကြီးသတင်း ပေးပို့လိုသော ရပ်ကွက်/ကျေးရွာအုပ်စု၏အမည်ကို ရွေးချယ်ပါ။",
         reply_markup=wards_keyboard,
     )
     if wards_keyboard2 is not None:
         await update.message.reply_text(
-            "အုပ်ကြီးသတင်း ပေးပိုလိုသော ရပ်ကွက်/ကျေးရွာအုပ်စု၏အမည်ကို ရွေးချယ်ပါ။",
+            "အုပ်ကြီးသတင်း ပေးပို့လိုသော ရပ်ကွက်/ကျေးရွာအုပ်စု၏အမည်ကို ရွေးချယ်ပါ။",
             reply_markup=wards_keyboard2,
         )
     return WARD
@@ -87,7 +87,7 @@ async def save_ward_ask_township_confirmation(update: Update, context: CallbackC
     ward = context.user_data["ward"]
     await context.application.bot.send_message(
         update.effective_chat.id,
-        f"{township} မြိုနယ်၊ {ward} ရပ်ကွက်/ကျေးရွာအုပ်စုက အုပ်ကြီးအကြာင်း သတင်း‌ပေးပိုလိုတာ မှန်ကန်ပါသလား။",
+        f"{township} မြိုနယ်၊ {ward} ရပ်ကွက်/ကျေးရွာအုပ်စုက အုပ်ကြီးအကြာင်း သတင်း‌ပေးပို့လိုတာ မှန်ကန်ပါသလား။",
         reply_markup=township_ward_confirmation_keyboard
     )
     return TOWNSHIP_WARD_CONFIRM
@@ -99,14 +99,14 @@ async def save_place_ask_name(update: Update, context: CallbackContext) -> int:
         del context.user_data["ward"]
         del context.user_data["township"]
         await update.message.reply_text(
-            """အုပ်ကြီးသတင်း ပေးပိုလိုသော မြိုနယ်နာမည်၏ ပထမဆုံးအက္ခရာကိုရွေးချယ်ပါ။ (ဥပမာ - ကမာရွတ်မြိုနယ်အတွက် “က”)
+            """အုပ်ကြီးသတင်း ပေးပို့လိုသော မြိုနယ်နာမည်၏ ပထမဆုံးအက္ခရာကိုရွေးချယ်ပါ။ (ဥပမာ - ကမာရွတ်မြိုနယ်အတွက် “က”)
         """,
             reply_markup=township_first_consonant_keyboard,
         )
         return TOWN_ALPHABET
     elif reply == township_ward_confirmation_keyboard.keyboard[0][0].text:
         await update.message.reply_text(
-            """ရပ်ကွက်/ကျေးရွာအုပ်စုက အုပ်ချုပ်ရေးမှူး၏ နာမည်အပြည့်အစုံနှင့် အများခေါ်သော အမည်များကို ရေးသားပေးပိုပါ။ """
+            """ရပ်ကွက်/ကျေးရွာအုပ်စုက အုပ်ချုပ်ရေးမှူး၏ နာမည်အပြည့်အစုံနှင့် အများခေါ်သော အမည်များကို ရေးသားပေးပို့ပါ။ """
         )
         return NAME
 
@@ -114,7 +114,7 @@ async def save_place_ask_name(update: Update, context: CallbackContext) -> int:
 async def save_name_ask_address(update: Update, context: CallbackContext) -> int:
     context.user_data["target_name"] = update.message.text
     await update.message.reply_text(
-        """အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) ၏ နေရပ်လိပ်စာနှင့် လမ်းညွှန်ကို ရေးသားပေးပိုပါ။"""
+        """အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) ၏ နေရပ်လိပ်စာနှင့် လမ်းညွှန်ကို ရေးသားပေးပို့ပါ။"""
     )
     return ADDRESS
 
@@ -122,7 +122,7 @@ async def save_name_ask_address(update: Update, context: CallbackContext) -> int
 async def save_address_ask_for_attachment_consent(update: Update, context: CallbackContext) -> int:
     context.user_data['address'] = update.message.text
     await update.message.reply_text(
-        "အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) ၏ ဓာတ်ပုံ (သို) ရုပ်သံဗီဒီယိုဖိုင်များ ရှိပါက ပေးပိုပါ။",
+        "အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) ၏ ဓာတ်ပုံ (သို) ရုပ်သံဗီဒီယိုဖိုင်များ ရှိပါက ပေးပို့ ပါ။",
         reply_markup=attachment_confirmation_keyboard
     )
     return ATTACHMENT_CONFIRMATION
@@ -132,12 +132,12 @@ async def ask_for_attachment(update: Update, context: CallbackContext) -> int:
     reply = update.message.text
     if reply == attachment_confirmation_keyboard.keyboard[0][1].text:
         await update.message.reply_text(
-            "အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) ၏ ပိုင်ဆိုင်မှုများ၊ စီးပွားရေးများ၊ လုပ်ကွက်များ၊ ချစားမှုများ၊ ယုတ်မာမှုများနှင့် ပက်သက်‌သော သတင်းပေးချက်များ ရေးသားပေးပိုပါ။"
+            "အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) ၏ ပို့င်ဆိုင်မှုများ၊ စီးပွားရေးများ၊ လုပ်ကွက်များ၊ ချစားမှုများ၊ ယုတ်မာမှုများနှင့် ပက်သက်‌သော သတင်းပေးချက်များ ရေးသားပေးပို့ပါ။"
         )
         return DETAILS
     elif reply == attachment_confirmation_keyboard.keyboard[0][0].text:
         await update.message.reply_text(
-            """📎 ကိုနှိပ်ပြီး ပေးပို့နိုင်ပါသည်။ """
+            """📎 ကိုနှိပ်ပြီး ပေးပို့ နိုင်ပါသည်။ """
         )
         return ATTACHMENT
 
@@ -152,7 +152,7 @@ async def save_photo_ask_details(update: Update, context: CallbackContext) -> in
         }
     ]
     await update.message.reply_text(
-        "အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) ၏ ပိုင်ဆိုင်မှုများ၊ စီးပွားရေးများ၊ လုပ်ကွက်များ၊ ချစားမှုများ၊ ယုတ်မာမှုများနှင့် ပက်သက်‌သော သတင်းပေးချက်များ ရေးသားပေးပိုပါ။"
+        "အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) ၏ ပိုင်ဆိုင်မှုများ၊ စီးပွားရေးများ၊ လုပ်ကွက်များ၊ ချစားမှုများ၊ ယုတ်မာမှုများနှင့် ပက်သက်‌သော သတင်းပေးချက်များ ရေးသားပေးပို့ပါ။"
     )
     return DETAILS
 
@@ -167,7 +167,7 @@ async def save_audio_ask_details(update: Update, context: CallbackContext) -> in
         }
     ]
     await update.message.reply_text(
-        "အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) ၏ ပိုင်ဆိုင်မှုများ၊ စီးပွားရေးများ၊ လုပ်ကွက်များ၊ ချစားမှုများ၊ ယုတ်မာမှုများနှင့် ပက်သက်‌သော သတင်းပေးချက်များ ရေးသားပေးပိုပါ။"
+        "အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) ၏ ပိုင်ဆိုင်မှုများ၊ စီးပွားရေးများ၊ လုပ်ကွက်များ၊ ချစားမှုများ၊ ယုတ်မာမှုများနှင့် ပက်သက်‌သော သတင်းပေးချက်များ ရေးသားပေးပို့ပါ။"
     )
     return DETAILS
 
@@ -182,7 +182,7 @@ async def save_video_ask_details(update: Update, context: CallbackContext) -> in
         }
     ]
     await update.message.reply_text(
-        "အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) ၏ ပိုင်ဆိုင်မှုများ၊ စီးပွားရေးများ၊ လုပ်ကွက်များ၊ ချစားမှုများ၊ ယုတ်မာမှုများနှင့် ပက်သက်‌သော သတင်းပေးချက်များ ရေးသားပေးပိုပါ။"
+        "အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) ၏ ပိုင်ဆိုင်မှုများ၊ စီးပွားရေးများ၊ လုပ်ကွက်များ၊ ချစားမှုများ၊ ယုတ်မာမှုများနှင့် ပက်သက်‌သော သတင်းပေးချက်များ ရေးသားပေးပို့ပါ။"
     )
     return DETAILS
 
@@ -197,7 +197,7 @@ async def save_document_ask_details(update: Update, context: CallbackContext) ->
         }
     ]
     await update.message.reply_text(
-        "အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) ၏ ပိုင်ဆိုင်မှုများ၊ စီးပွားရေးများ၊ လုပ်ကွက်များ၊ ချစားမှုများ၊ ယုတ်မာမှုများနှင့် ပက်သက်‌သော သတင်းပေးချက်များ ရေးသားပေးပိုပါ။"
+        "အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) ၏ ပိုင်ဆိုင်မှုများ၊ စီးပွားရေးများ၊ လုပ်ကွက်များ၊ ချစားမှုများ၊ ယုတ်မာမှုများနှင့် ပက်သက်‌သော သတင်းပေးချက်များ ရေးသားပေးပို့ပါ။"
     )
     return DETAILS
 
@@ -205,7 +205,7 @@ async def save_document_ask_details(update: Update, context: CallbackContext) ->
 async def save_details_ask_additional_info(update: Update, context: CallbackContext) -> int:
     context.user_data["details"] = update.message.text
     await update.message.reply_text(
-        "သီးခြား ဖြည့်စွက်သတင်းပေးလိုမှု ရှိပါက ရေးသားပေးပိုပါ။"
+        "သီးခြား ဖြည့်စွက်သတင်းပေးလိုမှု ရှိပါက ရေးသားပေးပို့ပါ။"
     )
     return ADDITIONAL_INFO
 
@@ -213,7 +213,7 @@ async def save_details_ask_additional_info(update: Update, context: CallbackCont
 async def save_additional_info_ask_confirmation(update: Update, context: CallbackContext) -> int:
     context.user_data["additional"] = update.message.text
     data = context.user_data
-    confirm_text = "{township} မြိုနယ်၊ {ward} အုပ်ချုပ်ရေးမှူး\nအမည် - {name}\nနေရပ်လိပ်စာ - {address}\nစီပွားရေး/လှုပ်ရှားမှုများ - {details}\n ဖြည့်စွက်သတင်းပေးချက် - {additional}\n သတင်းပေးပိုမှုကို အတည်ပြုပါ။"
+    confirm_text = "{township} မြိုနယ်၊ {ward} အုပ်ချုပ်ရေးမှူး\nအမည် - {name}\nနေရပ်လိပ်စာ - {address}\nစီပွားရေး/လှုပ်ရှားမှုများ - {details}\n ဖြည့်စွက်သတင်းပေးချက် - {additional}\n သတင်းပေးပို့မှုကို အတည်ပြုပါ။"
     formatted_string = confirm_text.format(
         township=data["township"],
         ward=data["ward"],
@@ -236,7 +236,8 @@ async def end_convo(update: Update, context: CallbackContext) -> int:
         print("upload")
         upload(context.user_data)
     await update.message.reply_text(
-        """စစ်ကျွန်အုပ်ချုပ်ရေးယန္တရားကို အောက်အခြေကစ ဖြိုချ‌တော်လှန်ရာမှာ မိမိတိုကိုယ်တိုင် ပူးပေါင်းပါဝင်ပေးတဲ့အတွက် ကျေးဇူးအထူးတင်ရှိပြီး ကျန်းမာဘေးကင်းစေဖို ဆန္ဒပြုပါတယ်။""",
+        """စစ်ကျွန်အုပ်ချုပ်ရေးယန္တရားကို အောက်အခြေကစ ဖြိုချ‌တော်လှန်ရာမှာ မိမိတိုကိုယ်တိုင် ပူးပေါင်းပါဝင်ပေးတဲ့အတွက် ကျေးဇူးအထူးတင်ရှိပြီး ကျန်းမာဘေးကင်းစေဖို ဆန္ဒပြုပါတယ်။
+        ထပ်မံသတင်းပို့ရန် /start သို့မဟုတ် /inform ကိုနှိပ်ပါ။""",
     )
     return ConversationHandler.END
 
