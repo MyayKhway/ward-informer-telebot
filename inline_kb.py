@@ -162,7 +162,7 @@ class StrengthPicker:
 class WardsKeyboard:
 
     def __init__(self, township):
-        df = pd.read_csv("Wards and Villages.csv")
+        df = pd.read_csv("Wards and Villages Bot.csv")
         wards_LUT = {}
         for column in df.columns:
             ward_index = 0
@@ -182,7 +182,7 @@ class WardsKeyboard:
 
         def keyboard_maker(wards):
             buttons_lst = []
-            keyboard = list(zip(*[iter(wards)] * 3))
+            keyboard = list(zip(*[iter(wards)] * 2))
             left_buttons_num = len(wards) % 2
             for buttons in keyboard:
                 button_row = list(map(lambda ward:
