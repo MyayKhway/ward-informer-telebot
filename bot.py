@@ -8,7 +8,7 @@ from telegram.ext import (
     CallbackQueryHandler,
 )
 from telegram import ReplyKeyboardMarkup, Update
-from send_to_AT import upload
+from send_to_AT import upload, upload_cancelled
 from inline_kb import WardsKeyboard
 from townships_and_villages import wards_LUT_key_search
 from reply_keyboards import (
@@ -16,7 +16,8 @@ from reply_keyboards import (
     township_keyboards_dict,
     township_ward_confirmation_keyboard,
     attachment_confirmation_keyboard,
-    submission_confirmation_keyboard
+    submission_confirmation_keyboard,
+    restart_keyboard,
 )
 from dotenv.main import load_dotenv
 import logging
@@ -39,8 +40,7 @@ TOWN_ALPHABET, TOWNSHIP, WARD, TOWNSHIP_WARD_CONFIRM, NAME, ADDRESS, ATTACHMENT,
 async def start(update: Update, context: CallbackContext) -> int:
     await update.message.reply_text(
         """
-        မိမိတိုနေထိုင်ရာ ရပ်ကွက်ဝန်းကျင် အနီးဆုံးက စစ်တပ်ထောက်တိုင် လက်ပါးစေဖြစ်တဲ့ ရပ်ကွက်အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) တွေအကြောင်း မိမိကိုယ်တိုင် သတင်းပေးနိုင်ဖို ရည်ရွယ်ပါတယ်။
-        အုပ်ကြီးသတင်း ပေးပို့လိုသော မြိုနယ်နာမည်၏ ပထမဆုံးအက္ခရာကိုရွေးချယ်ပါ။ (ဥပမာ - ကမာရွတ်မြိုနယ်အတွက် “က”)
+        မိမိတိုနေထိုင်ရာ ရပ်ကွက်ဝန်းကျင် အနီးဆုံးက စစ်တပ်ထောက်တိုင် လက်ပါးစေဖြစ်တဲ့ ရပ်ကွက်အုပ်ချုပ်ရေးမှူး (အုပ်ကြီး) တွေအကြောင်း မိမိကိုယ်တိုင် သတင်းပေးနိုင်ဖို ရည်ရွယ်ပါတယ်။\n\nအုပ်ကြီးသတင်း ပေးပို့လိုသော မြိုနယ်နာမည်၏ ပထမဆုံးအက္ခရာကိုရွေးချယ်ပါ။ (ဥပမာ - ကမာရွတ်မြိုနယ်အတွက် “က”)
         """,
         reply_markup=township_first_consonant_keyboard,
     )
@@ -213,7 +213,7 @@ async def save_details_ask_additional_info(update: Update, context: CallbackCont
 async def save_additional_info_ask_confirmation(update: Update, context: CallbackContext) -> int:
     context.user_data["additional"] = update.message.text
     data = context.user_data
-    confirm_text = "{township} မြိုနယ်၊ {ward} ရပ်ကွက်/ကျေးရွာအုပ်စု အုပ်ချုပ်ရေးမှူး\nအမည် - {name}\nနေရပ်လိပ်စာ - {address}\nစီပွားရေး/လှုပ်ရှားမှုများ - {details}\n ဖြည့်စွက်သတင်းပေးချက် - {additional}\n သတင်းပေးပို့မှုကို အတည်ပြုပါ။"
+    confirm_text = "{township} မြိုနယ်၊ {ward} ရပ်ကွက်/ကျေးရွာအုပ်စု အုပ်ချုပ်ရေးမှူး\n\nအမည် - {name}\n\nနေရပ်လိပ်စာ - {address}\n\nစီပွားရေး/လှုပ်ရှားမှုများ - {details}\n\nဖြည့်စွက်သတင်းပေးချက် - {additional}\n\nသတင်းပေးပို့မှုကို အတည်ပြုပါ။"
     formatted_string = confirm_text.format(
         township=data["township"],
         ward=data["ward"],
@@ -232,20 +232,27 @@ async def end_convo(update: Update, context: CallbackContext) -> int:
     context.user_data["reporter_telegram_id"] = str(update.message.from_user.id)
     context.user_data["reporter_telegram_name"] = update.message.from_user.name
     print(context.user_data)
-    if (update.message.text == "Yes"):
-        print("upload")
+    if (update.message.text == "အတည်ပြုပါသည်။"):
         upload(context.user_data)
+    else:
+        print("upload cancelled")
+        upload_cancelled(context.user_data)
     await update.message.reply_text(
-        """"စစ်ကျွန်အုပ်ချုပ်ရေးယန္တရားကို အောက်အခြေကစ ဖြိုချ‌တော်လှန်ရာမှာ မိမိတိုကိုယ်တိုင် ပူးပေါင်းပါဝင်ပေးတဲ့အတွက် ကျေးဇူးအထူးတင်ရှိပြီး ကျန်းမာဘေးကင်းစေဖို ဆန္ဒပြုပါတယ်။ လုံခြုံရေးအတွက် ယခု chat ကို ဖျက်လိုက်လိုရပါတယ်။ @OakGyiCampaignBot ကို မိတ်ဆွေများထံ မျှဝေ‌ပေးပါ။
+        """စစ်ကျွန်အုပ်ချုပ်ရေးယန္တရားကို အောက်အခြေကစ ဖြိုချ‌တော်လှန်ရာမှာ မိမိတိုကိုယ်တိုင် ပူးပေါင်းပါဝင်ပေးတဲ့အတွက် ကျေးဇူးအထူးတင်ရှိပြီး ကျန်းမာဘေးကင်းစေဖို ဆန္ဒပြုပါတယ်။ လုံခြုံရေးအတွက် ယခု Chat ကို Clear History (သို) Delete Chat နှိပ်၍ ဖျက်လိုက်ပါ။\n@OakGyiCampaignBot ကို မိတ်ဆွေများထံ မျှဝေ‌ပေးပါ။
 
-#အပ်ကြီးကမ်ပိန်း
-#OakGyiCampaign
-            """
+#အုပ်ကြီးကမ်ပိန်း
+#OakGyiCampaign""", reply_markup=restart_keyboard
     )
     return ConversationHandler.END
 
 
-def cancel(update: Update, context: CallbackContext) -> int:
+async def cancel(update: Update, context: CallbackContext) -> int:
+    await update.message.reply_text(
+        """စစ်ကျွန်အုပ်ချုပ်ရေးယန္တရားကို အောက်အခြေကစ ဖြိုချ‌တော်လှန်ရာမှာ မိမိတိုကိုယ်တိုင် ပူးပေါင်းပါဝင်ပေးတဲ့အတွက် ကျေးဇူးအထူးတင်ရှိပြီး ကျန်းမာဘေးကင်းစေဖို ဆန္ဒပြုပါတယ်။ လုံခြုံရေးအတွက် ယခု Chat ကို Clear History (သို) Delete Chat နှိပ်၍ ဖျက်လိုက်ပါ။\n@OakGyiCampaignBot ကို မိတ်ဆွေများထံ မျှဝေ‌ပေးပါ။
+
+#အုပ်ကြီးကမ်ပိန်း
+#OakGyiCampaign"""
+    )
     return ConversationHandler.END
 
 
@@ -255,7 +262,7 @@ def main() -> None:
     application = Application.builder().token(TOKEN).build()
 
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start), CommandHandler('inform', start)],
+        entry_points=[CommandHandler('start', start), CommandHandler('inform', start), MessageHandler(filters.Regex("Restart"), start)],
         states={
             TOWN_ALPHABET: [MessageHandler(filters.TEXT & ~filters.COMMAND, choose_township)],
             TOWNSHIP: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_ward)],
@@ -272,9 +279,9 @@ def main() -> None:
             ],
             DETAILS: [MessageHandler(filters.TEXT, save_details_ask_additional_info)],
             ADDITIONAL_INFO: [MessageHandler(filters.TEXT, save_additional_info_ask_confirmation)],
-            CONFIRMED: [MessageHandler(filters.TEXT & ~filters.COMMAND & filters.Regex("(Yes|No)"), end_convo)],
+            CONFIRMED: [MessageHandler(filters.TEXT & ~filters.COMMAND & filters.Regex("(အတည်ပြုပါသည်။|အတည်မပြုပါ။)"), end_convo)],
         },
-        fallbacks=[CommandHandler('cancel', cancel)],
+        fallbacks=[CommandHandler('cancel', cancel),],
         conversation_timeout=300,
         allow_reentry=True,
     )
