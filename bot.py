@@ -213,7 +213,7 @@ async def save_details_ask_additional_info(update: Update, context: CallbackCont
 async def save_additional_info_ask_confirmation(update: Update, context: CallbackContext) -> int:
     context.user_data["additional"] = update.message.text
     data = context.user_data
-    confirm_text = "{township} မြိုနယ်၊ {ward} အုပ်ချုပ်ရေးမှူး\nအမည် - {name}\nနေရပ်လိပ်စာ - {address}\nစီပွားရေး/လှုပ်ရှားမှုများ - {details}\n ဖြည့်စွက်သတင်းပေးချက် - {additional}\n သတင်းပေးပို့မှုကို အတည်ပြုပါ။"
+    confirm_text = "{township} မြိုနယ်၊ {ward} ရပ်ကွက်/ကျေးရွာအုပ်စု အုပ်ချုပ်ရေးမှူး\nအမည် - {name}\nနေရပ်လိပ်စာ - {address}\nစီပွားရေး/လှုပ်ရှားမှုများ - {details}\n ဖြည့်စွက်သတင်းပေးချက် - {additional}\n သတင်းပေးပို့မှုကို အတည်ပြုပါ။"
     formatted_string = confirm_text.format(
         township=data["township"],
         ward=data["ward"],
@@ -236,8 +236,11 @@ async def end_convo(update: Update, context: CallbackContext) -> int:
         print("upload")
         upload(context.user_data)
     await update.message.reply_text(
-        """စစ်ကျွန်အုပ်ချုပ်ရေးယန္တရားကို အောက်အခြေကစ ဖြိုချ‌တော်လှန်ရာမှာ မိမိတိုကိုယ်တိုင် ပူးပေါင်းပါဝင်ပေးတဲ့အတွက် ကျေးဇူးအထူးတင်ရှိပြီး ကျန်းမာဘေးကင်းစေဖို ဆန္ဒပြုပါတယ်။
-        ထပ်မံသတင်းပို့ရန် /start သို့မဟုတ် /inform ကိုနှိပ်ပါ။""",
+        """"စစ်ကျွန်အုပ်ချုပ်ရေးယန္တရားကို အောက်အခြေကစ ဖြိုချ‌တော်လှန်ရာမှာ မိမိတိုကိုယ်တိုင် ပူးပေါင်းပါဝင်ပေးတဲ့အတွက် ကျေးဇူးအထူးတင်ရှိပြီး ကျန်းမာဘေးကင်းစေဖို ဆန္ဒပြုပါတယ်။ လုံခြုံရေးအတွက် ယခု chat ကို ဖျက်လိုက်လိုရပါတယ်။ @OakGyiCampaignBot ကို မိတ်ဆွေများထံ မျှဝေ‌ပေးပါ။
+
+#အပ်ကြီးကမ်ပိန်း
+#OakGyiCampaign
+            """
     )
     return ConversationHandler.END
 
