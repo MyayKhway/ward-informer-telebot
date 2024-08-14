@@ -2,7 +2,7 @@ import pandas as pd
 
 
 def wards_LUT_key_search(township, ward_index_input):
-    df = pd.read_csv("Wards and Villages.csv")
+    df = pd.read_csv("Wards and Villages Bot.csv")
 
     wards_LUT = {}
     township_index = 'A'
