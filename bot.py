@@ -7,8 +7,9 @@ from telegram.ext import (
     CallbackContext,
     CallbackQueryHandler,
 )
+from datetime import datetime
 from telegram import ReplyKeyboardMarkup, Update
-from send_to_AT import upload, upload_cancelled
+from send_to_AT import upload, upload_cancelled, upload_all_msg
 from inline_kb import WardsKeyboard
 from townships_and_villages import wards_LUT_key_search
 from reply_keyboards import (
@@ -24,7 +25,9 @@ import logging
 import os
 from custom_filters import (
     place_confirm_filter,
-    attachment_confirm_filter
+    attachment_confirm_filter,
+    township_alphabet_filter,
+    township_names_filter
 )
 
 # Enable Loggin
@@ -256,6 +259,83 @@ async def cancel(update: Update, context: CallbackContext) -> int:
     return ConversationHandler.END
 
 
+async def text_fallback(update: Update, context: CallbackContext):
+    data_transfer_object = {
+        "reporter_telegram_id": str(update.message.from_user.id),
+        "reporter_telegram_name": update.message.from_user.name,
+        "message": update.message.text,
+    }
+    upload_all_msg(data_transfer_object)
+
+
+async def attachment_fallback(update: Update, context: CallbackContext):
+    file = await update.message.document.get_file()
+    filename = str(update.message.from_user.id) + " attachment " + datetime.now().isoformat()
+    data_transfer_object = {
+        "reporter_telegram_id": str(update.message.from_user.id),
+        "reporter_telegram_name": update.message.from_user.name,
+        "message": update.message.text if update.message.text else "",
+        "attachment": [
+            {
+                "url": file.file_path,
+                "filename": filename
+            }
+        ]
+    }
+    upload_all_msg(data_transfer_object)
+
+
+async def audio_fallback(update: Update, context: CallbackContext):
+    file = await update.message.audio.get_file()
+    filename = str(update.message.from_user.id) + " audio " + datetime.now().isoformat()
+    data_transfer_object = {
+        "reporter_telegram_id": str(update.message.from_user.id),
+        "reporter_telegram_name": update.message.from_user.name,
+        "message": update.message.text if update.message.text else "",
+        "attachment": [
+            {
+                "url": file.file_path,
+                "filename": filename
+            }
+        ]
+    }
+    upload_all_msg(data_transfer_object)
+
+
+async def video_fallback(update: Update, context: CallbackContext):
+    file = await update.message.video.get_file()
+    filename = str(update.message.from_user.id) + "video" + datetime.now().isoformat()
+    data_transfer_object = {
+        "reporter_telegram_id": str(update.message.from_user.id),
+        "reporter_telegram_name": update.message.from_user.name,
+        "message": update.message.text if update.message.text else "",
+        "attachment": [
+            {
+                "url": file.file_path,
+                "filename": filename
+            }
+        ],
+    }
+    upload_all_msg(data_transfer_object)
+
+
+async def photo_fallback(update: Update, context: CallbackContext):
+    file = await update.message.photo[-1].get_file()
+    filename = str(update.message.from_user.id) + "photo" + datetime.now().isoformat()
+    data_transfer_object = {
+        "reporter_telegram_id": str(update.message.from_user.id),
+        "reporter_telegram_name": update.message.from_user.name,
+        "message": update.message.text if update.message.text else "",
+        "attachment": [
+            {
+                "url": file.file_path,
+                "filename": filename
+            }
+        ],
+    }
+    upload_all_msg(data_transfer_object)
+
+
 def main() -> None:
     load_dotenv()
     TOKEN = os.environ.get("BOTTOKEN")
@@ -264,8 +344,8 @@ def main() -> None:
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start), CommandHandler('inform', start), MessageHandler(filters.Regex("Restart"), start)],
         states={
-            TOWN_ALPHABET: [MessageHandler(filters.TEXT & ~filters.COMMAND, choose_township)],
-            TOWNSHIP: [MessageHandler(filters.TEXT & ~filters.COMMAND, ask_ward)],
+            TOWN_ALPHABET: [MessageHandler(filters.TEXT & ~filters.COMMAND & township_alphabet_filter, choose_township)],
+            TOWNSHIP: [MessageHandler(filters.TEXT & ~filters.COMMAND & township_names_filter, ask_ward)],
             WARD: [CallbackQueryHandler(save_ward_ask_township_confirmation)],
             TOWNSHIP_WARD_CONFIRM: [MessageHandler(place_confirm_filter, save_place_ask_name)],
             NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, save_name_ask_address)],
@@ -281,7 +361,13 @@ def main() -> None:
             ADDITIONAL_INFO: [MessageHandler(filters.TEXT, save_additional_info_ask_confirmation)],
             CONFIRMED: [MessageHandler(filters.TEXT & ~filters.COMMAND & filters.Regex("(အတည်ပြုပါသည်။|အတည်မပြုပါ။)"), end_convo)],
         },
-        fallbacks=[CommandHandler('cancel', cancel),],
+        fallbacks=[
+            MessageHandler(filters.PHOTO, photo_fallback),
+            MessageHandler(filters.AUDIO, audio_fallback),
+            MessageHandler(filters.VIDEO, video_fallback),
+            MessageHandler(filters.Document.ALL, attachment_fallback),
+            CommandHandler('cancel', cancel),
+        ],
         conversation_timeout=300,
         allow_reentry=True,
     )
